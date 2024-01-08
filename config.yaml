@@ -1,0 +1,11 @@
+path: /D:/Felipe/Codigo/Model
+train: Img/Entrenamiento
+val: Img/Entrenamiento
+
+#Clases
+names:
+  0: Pitahaya
+  1: Granadilla
+  2: Arandanos
+  3: TomateArbol
+  4: Maracuya 
