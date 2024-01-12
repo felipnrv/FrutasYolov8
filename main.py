@@ -24,6 +24,8 @@ while True:
     tracks=model.track(frame,persist=True,show=False) #persist es para que se mantenga el objeto en pantalla,show es para que se muestre la imagen
     counter.start_counting(frame,tracks) #tracks es una lista de objetos detectados, cada objeto tiene un id, un rectangulo y una clase
     
+    results=model.predict(frame,save_txt=True,save_conf=True) #save_img es para guardar la imagen con los objetos detectados
+
     #Para cerrar la ventana se presiona la tecla k
     outfile.write(str(tracks)) 
     if cv2.waitKey(1) & 0xFF == ord('q') or cv2.waitKey(1) & 0xFF == 27:
