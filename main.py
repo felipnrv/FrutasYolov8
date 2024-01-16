@@ -1,11 +1,10 @@
 
-###
 from ultralytics import YOLO
 from ultralytics.solutions import object_counter
 import cv2
 
 
-outfile = open('new3.0.txt', 'w')
+outfile = open('new1.0.txt', 'w')
 model = YOLO('D:/Felipe/Codigo/Model/best.pt')
 cap = cv2.VideoCapture(0)
 
@@ -26,8 +25,8 @@ while True:
     
     results=model.predict(frame,save_txt=True,save_conf=True) #save_img es para guardar la imagen con los objetos detectados
 
-    #Para cerrar la ventana se presiona la tecla k
-    outfile.write(str(tracks)) 
+    #Para cerrar la ventana se presiona la tecla q o esc
+    outfile.write(str(results)) 
     if cv2.waitKey(1) & 0xFF == ord('q') or cv2.waitKey(1) & 0xFF == 27:
         outfile.close()
         break
