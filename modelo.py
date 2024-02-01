@@ -18,7 +18,7 @@ def run_modelo():
 
     counter = object_counter.ObjectCounter()#crea un objeto contador
 
-    points=[(500,0),(500,500)]#puntos de la region de conteo, se puede cambiar por [(200,600),(200,600),(400,600),(400,600)
+    points=[(350,0),(350,500)]#puntos de la region de conteo, se puede cambiar por [(200,600),(200,600),(400,600),(400,600)
     counter.set_args(view_img=True,reg_pts=points,classes_names=model.names,draw_tracks=False)#configura el objeto contador
 
 
@@ -28,10 +28,10 @@ def run_modelo():
         if not ret:
             print("No se pudo obtener la imagen")
             exit(0)
-        tracks=model.track(frame,persist=True,show=False) #persist es para que se mantenga el objeto en pantalla,show es para que se muestre la imagen
+        tracks=model.track(frame,persist=True,show=False)#conf=0.5 #persist es para que se mantenga el objeto en pantalla,show es para que se muestre la imagen
         counter.start_counting(frame,tracks) #tracks es una lista de objetos detectados, cada objeto tiene un id, un rectangulo y una clase
             
-        results=model.predict(frame,save_conf=True,save_txt=True,show_labels=True,show_conf=True) #save_img es para guardar la imagen con los objetos detectados
+        #results=model.predict(frame,save_conf=True,save_txt=True,show_labels=True,show_conf=True) #save_img es para guardar la imagen con los objetos detectados
         #print(results) #imprime los objetos detectados en la imagen
             #Para cerrar la ventana se presiona la tecla q o esc
         #outfile.write(str(results)) 
@@ -41,7 +41,7 @@ def run_modelo():
             #outfile.close()
             break
     cap.release()
-    
+    cv2.destroyAllWindows()
 
 run_modelo()
 

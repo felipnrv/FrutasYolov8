@@ -1,12 +1,12 @@
 import cv2
 import os
 # Abre el video en vivo
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Inicializa el contador de capturas
 capturas = 0
 
-directorio_capturas = 'D:/Felipe/Codigo/Imagenes/Imagenes frames'
+directorio_capturas = 'D:\Felipe\Codigo\Img'
 
         
 
@@ -24,7 +24,7 @@ while True:
     capturas += 1
 
     # Si se han tomado 300 capturas, sale del bucle
-    if capturas == 300:
+    if capturas == 100:
         break
 
     # Espera 1 milisegundo y verifica si se presiona la tecla 'q' para salir

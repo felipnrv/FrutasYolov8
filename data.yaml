@@ -1,0 +1,13 @@
+path: /content/drive/MyDrive/FotosFrutasYOLO/export
+train: images
+val: images
+
+
+#Clases
+
+names: 
+  0: arandanos
+  1: granadilla
+  2: maracuya
+  3: pitahaya
+  4: tomatearbol

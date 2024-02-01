@@ -29,6 +29,7 @@ def check_terminal_salida():
     linea = output_text.split("\n")
     
     lineas_salida = set()
+    #1 EJERCICIO DE BRAZOS 
 
     
     for line in linea: #para cada linea en lines
@@ -41,3 +42,7 @@ def check_terminal_salida():
                
 check_terminal_salida()
 
+#registro
+    #NJDIWDJOQDOI
+        #frutas detectada : 1MARACUYA 
+        #RESOLUCION 640X480
