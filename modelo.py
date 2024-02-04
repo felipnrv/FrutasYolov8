@@ -5,6 +5,7 @@ import pyrebase
 from flask import Flask 
 from flask import render_template
 from flask import Response
+import datetime as dt
 
 app = Flask(__name__,template_folder='plantilla') #se inicializa la aplicacion
 
@@ -31,7 +32,8 @@ fruta3_marac = 3 # maracuya
 fruta4_pitah = 4 # pitahaya
 fruta5_tomate = 5# tomate de arbol
 
-child_nombre = input("Ingrese un nombre para guardar el registro: ")
+child_nombre = dt.datetime.now()
+child_nombre = child_nombre.strftime(format='%Y-%m-%d %H:%M:%S')
 #una clase es un objeto que tiene atributos y metodos y una funcion es un bloque de codigo que se ejecuta cuando se llama
 class linea_conteo_class():
     def __init__(self,id_clase,linea_conteo):
