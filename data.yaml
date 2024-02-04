@@ -1,13 +1,16 @@
 path: /content/drive/MyDrive/FotosFrutasYOLO/export
+
 train: images
 val: images
 
 
-#Clases
+nc: 5
+names: ['granadilla', 'mango', 'maracuya', 'pitahaya', 'tomatearbol']
+#1 es granadilla, 2 es mango, 3 es maracuya, 4 es pitahaya, 5 es tomate de arbol
 
-names: 
-  0: arandanos
-  1: granadilla
-  2: maracuya
-  3: pitahaya
-  4: tomatearbol
+roboflow:
+  workspace: proyecto-detec-frutas
+  project: frutas_2.0
+  version: 5
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/proyecto-detec-frutas/frutas_2.0/dataset/5

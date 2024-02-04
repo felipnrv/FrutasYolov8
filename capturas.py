@@ -24,7 +24,7 @@ while True:
     capturas += 1
 
     # Si se han tomado 300 capturas, sale del bucle
-    if capturas == 100:
+    if capturas == 150:
         break
 
     # Espera 1 milisegundo y verifica si se presiona la tecla 'q' para salir
