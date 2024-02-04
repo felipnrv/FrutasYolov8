@@ -2,6 +2,11 @@ import cv2
 from ultralytics import YOLO
 import supervision as sv
 import pyrebase
+from flask import Flask 
+from flask import render_template
+from flask import Response
+
+app = Flask(__name__,template_folder='plantilla') #se inicializa la aplicacion
 
 config = {
         "apiKey": "AIzaSyCC1C7eIcb6Q0-WeWKuzSrZNwVoSyVf8Lw",
@@ -13,6 +18,7 @@ config = {
         "appId": "1:404825544625:web:efaa68356d01d1153ccf90",
         "measurementId": "G-EMQTJ61ZL6"
     }
+
 
 
 #Global variables#--------------------------------------
@@ -110,7 +116,7 @@ def main():
         print('Pitahaya',pitahaya_in)
         print('Tomatearbol',tomatearbol_in)
 
-        cv2.imshow("yolov8", frame)
+        #cv2.imshow("yolov8", frame)
 
         if (cv2.waitKey(1) == 27):
             break
@@ -132,7 +138,24 @@ def main():
             "Maracuya_Entrada": maracuya_in,
             "Pitahaya_Entrada": pitahaya_in,
             "Tomatearbol_Entrada": tomatearbol_in})
+        
 
+        (flag, encodedImage) = cv2.imencode(".jpg", frame)
+        if not flag:
+            continue
+        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
+            bytearray(encodedImage) + b'\r\n')
+
+@app.route('/')#se crea una ruta
+def index():
+    return render_template('index.html')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(main(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":
-    main()
+    #main()
+    app.run(debug=False)
+
+cap.release()
