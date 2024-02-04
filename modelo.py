@@ -26,11 +26,11 @@ config = {
 LINEA_INICIO = sv.Point(450, 0) #punto de inicio de la linea,la coordenada x es 320 y la coordenada y es 0
 LINEA_FINAL = sv.Point(450, 480) #punto final de la line, la coordenada x es 320 y la coordenada y es 480
 
-fruta1_grand = 1 # granadilla
-fruta2_mango = 2 # mango
-fruta3_marac = 3 # maracuya
-fruta4_pitah = 4 # pitahaya
-fruta5_tomate = 5# tomate de arbol
+fruta1_grand = 0 # granadilla
+fruta2_mango = 1 # mango
+fruta3_marac = 2 # maracuya
+fruta4_pitah = 3 # pitahaya
+fruta5_tomate = 4# tomate de arbol
 
 child_nombre = dt.datetime.now()
 child_nombre = child_nombre.strftime(format='%Y-%m-%d %H:%M:%S')
@@ -56,14 +56,17 @@ class linea_conteo_class():
 
 
 def main():
-    linea_2 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)#line counter es el contador de la linea
+    
+    linea = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL) #se crea el contador de la linea
     linea_1 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
+    linea_2 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)#line counter es el contador de la linea
     linea_3 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
     linea_4 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
     linea_5 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
 
     #LinezoneAnnotator es donde se esconde el contador de la linea
     linea_anotador = sv.LineZoneAnnotator(thickness=2, text_thickness=1, text_scale=0.5) #se crea el contador de la linea
+    
     caja_anotador = sv.BoxAnnotator(thickness=2,text_thickness=1,text_scale=0.5) #se crea el objeto que permite anotar las cajas
 
     # Create class objects
@@ -75,35 +78,69 @@ def main():
 
     model = YOLO("D:/Felipe/Codigo/Model/frutasmdl.pt")
 
-    for result in model.track(source=0, show=False, stream=True, agnostic_nms=True):
+    for result in model.track(source=1, show=False, stream=True, agnostic_nms=True):
         
         frame = result.orig_img
 
         #Detect al objects
         detections = sv.Detections.from_yolov8(result)
+
         detections = detections[detections.class_id != 10]
-        if result.boxes.id is not None:
-            detections.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+        detections1 = detections[detections.class_id == 0]
+        detections2 = detections[detections.class_id == 1]
+        detections3 = detections[detections.class_id == 2]
+        detections4 = detections[detections.class_id == 3]
+        detections5 = detections[detections.class_id == 4]
+      
+        if result.boxes.id is not None:#es para el conteo de las detecciones
+            detections1.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+
+        if result.boxes.id is not None: #se asigna el id del tracker a las detecciones
+            detections2.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+            
+        if result.boxes.id is not None: 
+            detections3.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+        
+        if result.boxes.id is not None: 
+            detections4.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+        
+        if result.boxes.id is not None: 
+            detections5.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+    
         #labels = create_labels(model,detections)
-        labels = [
+        labels = [ #se crea una lista con las etiquetas de las detecciones
         f"# {class_id}{model.model.names[class_id]} {confidence:0.2f}"
         for _, confidence, class_id,tracker_id
         in detections 
-    ]
-
+        ]
+        
+        
+        
         #Detect specific objects
-        mango_in,mango_out = mango.detections(result)
-        granadilla_in,granadilla_out = granadilla.detections(result)
         maracuya_in,maracuya_out = maracuya.detections(result)
+        granadilla_in,granadilla_out = granadilla.detections(result)
+        mango_in,mango_out = mango.detections(result)
         pitahaya_in,pitahaya_out = pitahaya.detections(result)
         tomatearbol_in,tomatearbol_out = tomatearbol.detections(result)
 
+        #mango_outstr = str(mango_out)
 
         frame = caja_anotador.annotate(scene=frame, detections=detections, labels=labels)
 
+        linea_1.trigger(detections=detections1)
+        linea_anotador.annotate(frame=frame, line_counter=linea)
         
-        linea_2.trigger(detections=detections)
-        linea_anotador.annotate(frame=frame, line_counter=linea_2)
+        linea_2.trigger(detections=detections2)
+        linea_anotador.annotate(frame=frame, line_counter=linea)
+
+        linea_3.trigger(detections=detections3)
+        linea_anotador.annotate(frame=frame, line_counter=linea)
+
+        linea_4.trigger(detections=detections4)
+        linea_anotador.annotate(frame=frame, line_counter=linea)
+
+        linea_5.trigger(detections=detections5)
+        linea_anotador.annotate(frame=frame, line_counter=linea)
 
         """	
         print('Mango_in',mango_in, 'Mango_out',mango_out)
@@ -112,11 +149,11 @@ def main():
         print('Pitahaya_in',pitahaya_in, 'Pitahaya_out',pitahaya_out)
         print('Tomatearbol_in',tomatearbol_in, 'Tomatearbol_out',tomatearbol_out)
         """
-        print('Mango',mango_in)
-        print('Granadilla',granadilla_in)
-        print('Maracuya',maracuya_in)
-        print('Pitahaya',pitahaya_in)
-        print('Tomatearbol',tomatearbol_in)
+        x=print('Mango',mango_out)
+        print('Granadilla',granadilla_out)
+        print('Maracuya',maracuya_out)
+        print('Pitahaya',pitahaya_out)
+        print('Tomatearbol',tomatearbol_out)
 
         #cv2.imshow("yolov8", frame)
 
@@ -135,11 +172,11 @@ def main():
             "Tomatearbol_Entrada": tomatearbol_in, "Tomatearbol_Salida": tomatearbol_out})
         """
         db.child(child_nombre).update(
-            {"Mango_Entrada": mango_in,
-            "Granadilla_Entrada": granadilla_in,
-            "Maracuya_Entrada": maracuya_in,
-            "Pitahaya_Entrada": pitahaya_in,
-            "Tomatearbol_Entrada": tomatearbol_in})
+            {"Mango_Entrada": mango_out,
+            "Granadilla_Entrada": granadilla_out,
+            "Maracuya_Entrada": maracuya_out,
+            "Pitahaya_Entrada": pitahaya_out,
+            "Tomatearbol_Entrada": tomatearbol_out})
         
 
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
@@ -150,13 +187,16 @@ def main():
 
 @app.route('/')#se crea una ruta
 def index():
+    
     return render_template('index.html')
 
 @app.route('/video_feed')
 def video_feed():
     return Response(main(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+
+
 if __name__ == "__main__":
     #main()
-    app.run(debug=False)
+    app.run(debug=True)
 
