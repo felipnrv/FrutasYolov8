@@ -7,6 +7,7 @@ from flask import render_template
 from flask import Response
 import datetime as dt
 
+
 app = Flask(__name__,template_folder='plantilla') #se inicializa la aplicacion
 
 config = {
@@ -56,7 +57,7 @@ class linea_conteo_class():
 
 
 def main():
-    
+
     linea = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL) #se crea el contador de la linea
     linea_1 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
     linea_2 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)#line counter es el contador de la linea
@@ -77,6 +78,7 @@ def main():
     tomatearbol = linea_conteo_class(fruta5_tomate, linea_5)
 
     model = YOLO("D:/Felipe/Codigo/Model/frutasmdl.pt")
+
 
     for result in model.track(source=1, show=False, stream=True, agnostic_nms=True):
         
@@ -113,23 +115,18 @@ def main():
         for _, confidence, class_id,tracker_id
         in detections 
         ]
-        
-        
-        
         #Detect specific objects
         maracuya_in,maracuya_out = maracuya.detections(result)
         granadilla_in,granadilla_out = granadilla.detections(result)
         mango_in,mango_out = mango.detections(result)
         pitahaya_in,pitahaya_out = pitahaya.detections(result)
         tomatearbol_in,tomatearbol_out = tomatearbol.detections(result)
-
-        #mango_outstr = str(mango_out)
-
+        
         frame = caja_anotador.annotate(scene=frame, detections=detections, labels=labels)
 
         linea_1.trigger(detections=detections1)
         linea_anotador.annotate(frame=frame, line_counter=linea)
-        
+            
         linea_2.trigger(detections=detections2)
         linea_anotador.annotate(frame=frame, line_counter=linea)
 
@@ -142,19 +139,13 @@ def main():
         linea_5.trigger(detections=detections5)
         linea_anotador.annotate(frame=frame, line_counter=linea)
 
-        """	
-        print('Mango_in',mango_in, 'Mango_out',mango_out)
-        print('Granadilla_in',granadilla_in, 'Granadilla_out',granadilla_out)
-        print('Maracuya_in',maracuya_in, 'Maracuya_out',maracuya_out)
-        print('Pitahaya_in',pitahaya_in, 'Pitahaya_out',pitahaya_out)
-        print('Tomatearbol_in',tomatearbol_in, 'Tomatearbol_out',tomatearbol_out)
-        """
-        x=print('Mango',mango_out)
+       
+        print('Mango',mango_out)
         print('Granadilla',granadilla_out)
         print('Maracuya',maracuya_out)
         print('Pitahaya',pitahaya_out)
         print('Tomatearbol',tomatearbol_out)
-
+      
         #cv2.imshow("yolov8", frame)
 
         if (cv2.waitKey(1) == 27):
@@ -163,14 +154,7 @@ def main():
         firebase = pyrebase.initialize_app(config)
         db = firebase.database()
 
-        """
-        db.child(child_nombre).update(
-            {"Mango_Entrada": mango_in, "Mango_Salida": mango_out,
-            "Granadilla_Entrada": granadilla_in, "Granadilla_Salida": granadilla_out,
-            "Maracuya_Entrada": maracuya_in, "Maracuya_Salida": maracuya_out,
-            "Pitahaya_Entrada": pitahaya_in, "Pitahaya_Salida": pitahaya_out,
-            "Tomatearbol_Entrada": tomatearbol_in, "Tomatearbol_Salida": tomatearbol_out})
-        """
+       
         db.child(child_nombre).update(
             {"Mango_Entrada": mango_out,
             "Granadilla_Entrada": granadilla_out,
@@ -178,12 +162,13 @@ def main():
             "Pitahaya_Entrada": pitahaya_out,
             "Tomatearbol_Entrada": tomatearbol_out})
         
-
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
         if not flag:
-            continue
+                continue
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-            bytearray(encodedImage) + b'\r\n')
+                bytearray(encodedImage) + b'\r\n')
+   
+        
 
 @app.route('/')#se crea una ruta
 def index():
@@ -193,8 +178,6 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     return Response(main(), mimetype="multipart/x-mixed-replace; boundary=frame")
-
-
 
 if __name__ == "__main__":
     #main()
