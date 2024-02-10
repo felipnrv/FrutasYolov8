@@ -6,7 +6,7 @@ val: images
 
 nc: 5
 names: ['granadilla', 'mango', 'maracuya', 'pitahaya', 'tomatearbol']
-#1 es granadilla, 2 es mango, 3 es maracuya, 4 es pitahaya, 5 es tomate de arbol
+#0 es granadilla, 1 es mango, 2 es maracuya, 3 es pitahaya, 4 es tomate de arbol
 
 roboflow:
   workspace: proyecto-detec-frutas

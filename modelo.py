@@ -201,14 +201,8 @@ def main():
             # Mostrar la tabla
         ax.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='left')
 
-        
-
         plt.savefig('output1.png', dpi=300, bbox_inches='tight')
 
-
-        
-
-       
         db.child(child_nombre).update(
             {"Mango_Entrada": mango_out,
             "Granadilla_Entrada": granadilla_out,
