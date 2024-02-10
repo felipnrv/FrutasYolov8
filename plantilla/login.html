@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://media.istockphoto.com/id/1309815703/es/vector/ilustraci%C3%B3n-de-fruta-fresca-elementos-vectoriales-dibujados-a-mano.jpg?s=612x612&w=0&k=20&c=XyRXcehFnv6nNlGfbWBjtfuieQIlYMvBHE8hkApx2vc=');
+            background-size: cover;
+            background-position: center center;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo del botón enviar */
+        button[type="submit"] {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            padding: 15px 30px;
+            font-size: 1.4rem;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase; /* Opcional: convertir texto a mayúsculas */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <form method="post" action="/login">
+      <label for="email">Email:</label>
+      <input type="email" name="email" required>
+      <label for="password">Password:</label>
+      <input type="password" name="password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
