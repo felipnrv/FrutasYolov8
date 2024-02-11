@@ -2,13 +2,14 @@ import cv2
 from ultralytics import YOLO
 import supervision as sv
 import pyrebase
-from flask import Flask,render_template,Response,request,redirect,url_for 
+from flask import Flask,render_template,Response,request,redirect,url_for,session 
 import datetime as dt
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
 app = Flask(__name__,template_folder='plantilla') #se inicializa la aplicacion
+app.secret_key = 'kf28721grR'
 
 config = {
         "apiKey": "AIzaSyCC1C7eIcb6Q0-WeWKuzSrZNwVoSyVf8Lw",
@@ -34,8 +35,11 @@ fruta3_marac = 2 # maracuya
 fruta4_pitah = 3 # pitahaya
 fruta5_tomate = 4# tomate de arbol
 
-child_nombre = dt.datetime.now()
-child_nombre = child_nombre.strftime(format='%Y-%m-%d')
+fecha_db = dt.datetime.now()
+fecha_db = fecha_db.strftime(format='%Y-%m-%d')
+
+hora_db = dt.datetime.now()
+hora_db = hora_db.strftime(format='%H:%M')
 #una clase es un objeto que tiene atributos y metodos y una funcion es un bloque de codigo que se ejecuta cuando se llama
 
 
@@ -180,30 +184,9 @@ def main():
         if tomatearbol_out != 0:
             print('Tomatearbol', tomatearbol_out)
 
-        fecha = pd.to_datetime("today")
-
-        data={"Mango": [mango_out],"Maracuya":[maracuya_out],
-              "Granadilla":[granadilla_out],
-              "Pitahaya":[pitahaya_out],
-              "Tomate de arbol":[tomatearbol_out]}
         
-        df = pd.DataFrame(data)
-
-        fecha_actual = pd.to_datetime("today").strftime("%d-%m-%Y")
-
-            # Crear la tabla
-        fig, ax = plt.subplots(figsize=(8, 5))
-        ax.axis('off')
-
-            # Agregar título
-        ax.text(0.5, 1.05, "Informe del conteo de frutas - " + fecha_actual, ha='center', fontsize=14)
-
-            # Mostrar la tabla
-        ax.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='left')
-
-        plt.savefig('output1.png', dpi=300, bbox_inches='tight')
-
-        db.child(child_nombre).update(
+        
+        db.child(fecha_db).child(hora_db).update(
             {"Mango_Entrada": mango_out,
             "Granadilla_Entrada": granadilla_out,
             "Maracuya_Entrada": maracuya_out,
@@ -220,8 +203,11 @@ def main():
     return {"mango: ":mango_out,"maracuya: ":maracuya_out}
     #return render_template('index.html',mango_out_list=mango_out_list)
 
+
+
 @app.route('/')#se crea una ruta
 def main_page():
+    
     return render_template('main.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -234,18 +220,12 @@ def register():
         password = request.form['password']
 
         # Enviar datos a la base de datos de Firebase
-        try:
-            db.child(child_nombre).child(nombre).update({
-                "Nombre": nombre,
-                "Apellido": apellido,
-                "Correo": email,
-                "Contraseña": password
-            })
-        except Exception as e:
-            # Manejar errores si hay algún problema al actualizar la base de datos
-            print("Error:", e)
-            return "Error al registrar. Por favor, inténtalo de nuevo más tarde."
-        
+        db.child('Registro Usuarios').push({
+            'nombre': nombre,
+            'apellido': apellido,
+            'email': email,
+            'fecha':fecha_db
+        })
         
         user=auth.create_user_with_email_and_password(email, password)
         	
@@ -265,18 +245,36 @@ def login():
         # Firebase Authentication
         try:
             user = auth.sign_in_with_email_and_password(email, password)
-            return redirect(url_for('video'))
+
+            id_token = user['idToken'] #se obtiene el token de autenticacion
+            user_data = auth.get_account_info(id_token) #se obtiene la informacion del usuario
+            user_uid = user_data['users'][0]['localId']#se obtiene el id del usuario    
+            
+            user_ref=db.child(fecha_db).child(hora_db)
+            user_data={'email':email}
+            user_ref.set(user_data)
+
+            session['user'] = user_data
+            #user_data =auth.get_user(user['idToken'])
+            return redirect(url_for('video'))#,uid=user_data.uid,email=user_data.email))
         except Exception as e:
             print("Error:", e)
             return render_template('login.html', error=str(e))
 
     return render_template('login.html')
 
-@app.route('/video')#se crea una ruta
+
+
+@app.route('/video' ,methods=['GET', 'POST'])#se crea una ruta
 def video():
     
+
     return render_template('video.html')
 
+@app.route('/informe')#se crea una ruta
+def informe():
+    user_data=session.get('user_data',{})
+    return render_template('informe.html',user_data=user_data)
 
 @app.route('/video_feed')
 def video_feed():
