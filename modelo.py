@@ -150,7 +150,6 @@ def main():
         linea_5.trigger(detections=detections5)
         linea_anotador.annotate(frame=frame, line_counter=linea)
 
-        
         y_offset = 50  # Espacio vertical entre cada línea de texto
 
         mango_text = f"Mango: {mango_out}"
@@ -187,11 +186,11 @@ def main():
         
         
         db.child(fecha_db).child(hora_db).update(
-            {"Mango_Entrada": mango_out,
-            "Granadilla_Entrada": granadilla_out,
-            "Maracuya_Entrada": maracuya_out,
-            "Pitahaya_Entrada": pitahaya_out,
-            "Tomatearbol_Entrada": tomatearbol_out})
+            {"Mango": mango_out,
+            "Granadilla": granadilla_out,
+            "Maracuya": maracuya_out,
+            "Pitahaya": pitahaya_out,
+            "Tomatearbol": tomatearbol_out})
         
 
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
@@ -273,8 +272,12 @@ def video():
 
 @app.route('/informe')#se crea una ruta
 def informe():
-    user_data=session.get('user_data',{})
-    return render_template('informe.html',user_data=user_data)
+    user_data=session.get('user',{})
+    user_uid=user_data.get('uid','')
+    user_ref=db.child(fecha_db).child(hora_db)
+    user_info=user_ref.get().val()#se obtiene la informacion del usuario
+    fecha = fecha_db
+    return render_template('informe.html',user_data=user_info,fecha=fecha)
 
 @app.route('/video_feed')
 def video_feed():
