@@ -3,18 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Page</title>
+    <title>Informe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .report-info {
+            margin-bottom: 20px;
+        }
+        .report-info p {
+            margin: 5px 0;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .report-table th, .report-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .report-table th {
+            background-color: #f2f2f2;
+        }
+        .fruit-image {
+            width: 50px; /* Adjust the size as needed */
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Informe</h1>
-    <p>Date: {{ fecha }}</p>
-    <p>Email: {{user_data.email}}</p>
-    <p>Maracuya: {{user_data.Maracuya}}</p>
-    <p>Mango:{{user_data.Mango}}</p>
-    <p>Pitahaya:{{user_data.Pitahaya}}</p>
-    <p>Tomate de Arbol:{{user_data.Tomatearbol}}</p>
-    <p>Granadilla:{{user_data.Granadilla}}</p>
-    
-    <!-- Otros elementos de la página aquí -->
+    <div class="container">
+        <h1>Informe</h1>
+        <div class="report-info">
+            <p>Date: {{ fecha }}</p>
+            <p>Email: {{ user_data.email }}</p>
+        </div>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Item</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img class="fruit-image" src="https://5aldia.cl/wp-content/uploads/2021/11/maracuya.webp" alt="Maracuya"></td>
+                    <td>Maracuyá</td>
+                    <td>{{ user_data.Maracuya }}</td>
+                </tr>
+                <tr>
+                    <td><img class="fruit-image" src="https://www.thani.ec/wp-content/uploads/2022/05/mango1.jpeg" alt="Mango"></td>
+                    <td>Mango</td>
+                    <td>{{ user_data.Mango }}</td>
+                </tr>
+                <tr>
+                    <td><img class="fruit-image" src="https://frutabona.com/wp/wp-content/uploads/2019/08/2-piathaya-roja.jpg" alt="Pitahaya"></td>
+                    <td>Pitahaya</td>
+                    <td>{{ user_data.Pitahaya }}</td>
+                </tr>
+                <tr>
+                    <td><img class="fruit-image" src="https://lavaquita.co/cdn/shop/products/c6e77264-a4db-4f70-af17-ce84d0da417f_512x512.png?v=1622197586" alt="Tomate_de_Arbol"></td>
+                    <td>Tomate de Arbol</td>
+                    <td>{{ user_data.Tomatearbol }}</td>
+                </tr>
+                <tr>
+                    <td><img class="fruit-image" src="https://www.consalud.es/uploads/s1/19/48/97/3/granadilla.jpeg" alt="Granadilla"></td>
+                    <td>Granadilla</td>
+                    <td>{{ user_data.Granadilla }}</td>
+                </tr>
+                <!-- Add similar rows for other fruits -->
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
