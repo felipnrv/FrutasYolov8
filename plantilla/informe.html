@@ -46,6 +46,24 @@
             width: 50px; /* Adjust the size as needed */
             height: auto;
         }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -92,6 +110,12 @@
                 <!-- Add similar rows for other fruits -->
             </tbody>
         </table>
+        <div class="button-container">
+            <button onclick="window.location.href='/'">Regresar</button>
+            <a href="javascript:window.print()" class="button-container">
+                <img src="https://cdn-icons-png.flaticon.com/512/3099/3099914.png" alt="Imprimir" width="28" height="28">
+                Imprimir</a>
     </div>
 </body>
 </html>
+

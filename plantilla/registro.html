@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
+  <title>Registro</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -51,11 +51,11 @@
     /* Estilo del botón enviar */
     input[type="submit"] {
       text-align: center;
-      display: block;
-      margin: 0 auto;
-      padding: 15px 30px;
-      font-size: 1.4rem;
-      background-color: #333;
+      display: inline-block;
+      margin: 0 ;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #404cc7;
       color: #fff;
       border: none;
       border-radius: 5px;
@@ -66,13 +66,35 @@
     }
 
     input[type="submit"]:hover {
-      background-color: #444;
+      background-color: #303aa5;
+    }
+    a.btn-regresar { /* Convertir botón Regresar en un enlace */
+      text-align: center;
+      display: inline-block; /* Cambiar a inline-block */
+      margin: 0; /* Eliminar margen superior */
+      padding: 8px 18px; /* Reducir tamaño */
+      font-size: 1rem; /* Reducir tamaño de fuente */
+      background-color: #575656; /* Cambiar color */
+      color: #fff; /* Cambiar color de texto */
+      border: none;
+      transition: background-color 0.3s ease;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-decoration: none; /* Eliminar subrayado */
+    }
+
+    a.btn-regresar:hover {
+      background-color: #444; /* Cambiar color al pasar el mouse */
+    }
+    .button-container {
+      text-align: center; 
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Register</h1>
+    <h1>Registro</h1>
     <form method="post" action="/register">
       <label for="nombre">Nombre:</label>
       <input type="text" name="nombre" required>
@@ -82,7 +104,10 @@
       <input type="email" name="email" required>
       <label for="password">Password:</label>
       <input type="password" name="password" required>
-      <input type="submit" value="Enviar" onclick="location.href='main.html'">
+      <div class="button-container">
+        <a href="/" class="btn-regresar">Regresar</a>
+        <input type="submit" value="Enviar" onclick="location.href='main.html'">
+      </div>
       
     </form>
   </div>

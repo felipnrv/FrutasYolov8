@@ -90,114 +90,115 @@ def main():
 
     model = YOLO("D:/Felipe/Codigo/Model/frutasmdl.pt")
 
-    stop_detection = False
-    for result in model.track(source=0, show=False, stream=True, agnostic_nms=True):
-        
-        frame = result.orig_img
-
-        
-        detections = sv.Detections.from_yolov8(result)
-
-        detections = detections[detections.class_id != 10]
-        detections1 = detections[detections.class_id == 0]
-        detections2 = detections[detections.class_id == 1]
-        detections3 = detections[detections.class_id == 2]
-        detections4 = detections[detections.class_id == 3]
-        detections5 = detections[detections.class_id == 4]
-      
-        if result.boxes.id is not None:#es para el conteo de las detecciones
-            detections1.tracker_id = result.boxes.id.cpu().numpy().astype(int)
-
-        if result.boxes.id is not None: #se asigna el id del tracker a las detecciones
-            detections2.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+    cam_sources=[0,1]
+    for source in cam_sources:
+        for result in model.track(source=source, show=False, stream=True, agnostic_nms=True):
             
-        if result.boxes.id is not None: 
-            detections3.tracker_id = result.boxes.id.cpu().numpy().astype(int)
-        
-        if result.boxes.id is not None: 
-            detections4.tracker_id = result.boxes.id.cpu().numpy().astype(int)
-        
-        if result.boxes.id is not None: 
-            detections5.tracker_id = result.boxes.id.cpu().numpy().astype(int)
-    
-        
-        labels = [ #se crea una lista con las etiquetas de las detecciones
-        f"# {class_id}{model.model.names[class_id]} {confidence:0.2f}"
-        for _, confidence, class_id,tracker_id
-        in detections 
-        ]
-        #Detect specific objects
-        maracuya_in,maracuya_out = maracuya.detections(result)
-        granadilla_in,granadilla_out = granadilla.detections(result)
-        mango_in,mango_out = mango.detections(result)
-        pitahaya_in,pitahaya_out = pitahaya.detections(result)
-        tomatearbol_in,tomatearbol_out = tomatearbol.detections(result)
-        
-        frame = caja_anotador.annotate(scene=frame, detections=detections, labels=labels)
+            frame = result.orig_img
 
-        linea_1.trigger(detections=detections1)
-        linea_anotador.annotate(frame=frame, line_counter=linea)
             
-        linea_2.trigger(detections=detections2)
-        linea_anotador.annotate(frame=frame, line_counter=linea)
+            detections = sv.Detections.from_yolov8(result)
 
-        linea_3.trigger(detections=detections3)
-        linea_anotador.annotate(frame=frame, line_counter=linea)
-
-        linea_4.trigger(detections=detections4)
-        linea_anotador.annotate(frame=frame, line_counter=linea)
-
-        linea_5.trigger(detections=detections5)
-        linea_anotador.annotate(frame=frame, line_counter=linea)
-
-        y_offset = 50  # Espacio vertical entre cada línea de texto
-
-        mango_text = f"Mango: {mango_out}"
-        cv2.putText(frame, mango_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#color negro en rgb es (0,0,0)
-        y_offset += 30  # Incrementar el desplazamiento vertical
-
-        granadilla_text = f"Granadilla: {granadilla_out}"
-        cv2.putText(frame, granadilla_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#0.5 es el tamaño de la letra,1 es el grosor de la letra
-        y_offset += 30
-
-        maracuya_text = f"Maracuya: {maracuya_out}"
-        cv2.putText(frame, maracuya_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
-        y_offset += 30
-
-        pitahaya_text = f"Pitahaya: {pitahaya_out}"
-        cv2.putText(frame, pitahaya_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
-        y_offset += 30
-
-        tomatearbol_text = f"Tomate de arbol: {tomatearbol_out}"
-        cv2.putText(frame, tomatearbol_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
-        y_offset += 30
-
-        if mango_out != 0:
-            print('Mango', mango_out)
-        if granadilla_out != 0:
-            print('Granadilla', granadilla_out)
-        if maracuya_out != 0:
-            print('Maracuya', maracuya_out)
-        if pitahaya_out != 0:
-            print('Pitahaya', pitahaya_out)
-        if tomatearbol_out != 0:
-            print('Tomatearbol', tomatearbol_out)
-
+            detections = detections[detections.class_id != 10]
+            detections1 = detections[detections.class_id == 0]
+            detections2 = detections[detections.class_id == 1]
+            detections3 = detections[detections.class_id == 2]
+            detections4 = detections[detections.class_id == 3]
+            detections5 = detections[detections.class_id == 4]
         
-        
-        db.child(fecha_db).child(hora_db).update(
-            {"Mango": mango_out,
-            "Granadilla": granadilla_out,
-            "Maracuya": maracuya_out,
-            "Pitahaya": pitahaya_out,
-            "Tomatearbol": tomatearbol_out})
-        
+            if result.boxes.id is not None:#es para el conteo de las detecciones
+                detections1.tracker_id = result.boxes.id.cpu().numpy().astype(int)
 
-        (flag, encodedImage) = cv2.imencode(".jpg", frame)
-        if not flag:
-                continue
-        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-                bytearray(encodedImage) + b'\r\n')
+            if result.boxes.id is not None: #se asigna el id del tracker a las detecciones
+                detections2.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+                
+            if result.boxes.id is not None: 
+                detections3.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+            
+            if result.boxes.id is not None: 
+                detections4.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+            
+            if result.boxes.id is not None: 
+                detections5.tracker_id = result.boxes.id.cpu().numpy().astype(int)
+        
+            
+            labels = [ #se crea una lista con las etiquetas de las detecciones
+            f"# {class_id}{model.model.names[class_id]} {confidence:0.2f}"
+            for _, confidence, class_id,tracker_id
+            in detections 
+            ]
+            #Detect specific objects
+            maracuya_in,maracuya_out = maracuya.detections(result)
+            granadilla_in,granadilla_out = granadilla.detections(result)
+            mango_in,mango_out = mango.detections(result)
+            pitahaya_in,pitahaya_out = pitahaya.detections(result)
+            tomatearbol_in,tomatearbol_out = tomatearbol.detections(result)
+            
+            frame = caja_anotador.annotate(scene=frame, detections=detections, labels=labels)
+
+            linea_1.trigger(detections=detections1)
+            linea_anotador.annotate(frame=frame, line_counter=linea)
+                
+            linea_2.trigger(detections=detections2)
+            linea_anotador.annotate(frame=frame, line_counter=linea)
+
+            linea_3.trigger(detections=detections3)
+            linea_anotador.annotate(frame=frame, line_counter=linea)
+
+            linea_4.trigger(detections=detections4)
+            linea_anotador.annotate(frame=frame, line_counter=linea)
+
+            linea_5.trigger(detections=detections5)
+            linea_anotador.annotate(frame=frame, line_counter=linea)
+
+            y_offset = 50  # Espacio vertical entre cada línea de texto
+
+            mango_text = f"Mango: {mango_out}"
+            cv2.putText(frame, mango_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#color negro en rgb es (0,0,0)
+            y_offset += 30  # Incrementar el desplazamiento vertical
+
+            granadilla_text = f"Granadilla: {granadilla_out}"
+            cv2.putText(frame, granadilla_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#0.5 es el tamaño de la letra,1 es el grosor de la letra
+            y_offset += 30
+
+            maracuya_text = f"Maracuya: {maracuya_out}"
+            cv2.putText(frame, maracuya_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
+            y_offset += 30
+
+            pitahaya_text = f"Pitahaya: {pitahaya_out}"
+            cv2.putText(frame, pitahaya_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
+            y_offset += 30
+
+            tomatearbol_text = f"Tomate de arbol: {tomatearbol_out}"
+            cv2.putText(frame, tomatearbol_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
+            y_offset += 30
+
+            if mango_out != 0:
+                print('Mango', mango_out)
+            if granadilla_out != 0:
+                print('Granadilla', granadilla_out)
+            if maracuya_out != 0:
+                print('Maracuya', maracuya_out)
+            if pitahaya_out != 0:
+                print('Pitahaya', pitahaya_out)
+            if tomatearbol_out != 0:
+                print('Tomatearbol', tomatearbol_out)
+
+            
+            
+            db.child(fecha_db).child(hora_db).update(
+                {"Mango": mango_out,
+                "Granadilla": granadilla_out,
+                "Maracuya": maracuya_out,
+                "Pitahaya": pitahaya_out,
+                "Tomatearbol": tomatearbol_out})
+            
+
+            (flag, encodedImage) = cv2.imencode(".jpg", frame)
+            if not flag:
+                    continue
+            yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
+                    bytearray(encodedImage) + b'\r\n')
         
     return {"mango: ":mango_out,"maracuya: ":maracuya_out}
     #return render_template('index.html',mango_out_list=mango_out_list)
@@ -264,10 +265,9 @@ def login():
 
 
 
-@app.route('/video' ,methods=['GET', 'POST'])#se crea una ruta
+@app.route('/video' )#se crea una ruta
 def video():
     
-
     return render_template('video.html')
 
 @app.route('/informe')#se crea una ruta

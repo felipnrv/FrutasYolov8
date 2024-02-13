@@ -48,13 +48,14 @@
         }
 
         /* Estilo del botón enviar */
-        button[type="submit"] {
+        button[type="submit"],
+        a.btn-regresar {
             text-align: center;
-            display: block;
-            margin: 0 auto;
-            padding: 15px 30px;
-            font-size: 1.4rem;
-            background-color: #333;
+            display: inline-block;
+            margin: 0 10px; /* Espaciado entre los botones */
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #404cc7;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -63,9 +64,33 @@
             text-transform: uppercase; /* Opcional: convertir texto a mayúsculas */
         }
 
-        button[type="submit"]:hover {
-            background-color: #444;
+        button[type="submit"]:hover,
+        a.btn-regresar:hover {
+            background-color: #303aa5;
         }
+
+        a.btn-regresar { /* Convertir botón Regresar en un enlace */
+            text-align: center;
+            display: inline-block; /* Cambiar a inline-block */
+            margin: 0; /* Eliminar margen superior */
+            padding: 8px 18px; /* Reducir tamaño */
+            font-size: 1.2rem; /* Reducir tamaño de fuente */
+            background-color: #575656; /* Cambiar color */
+            color: #fff; /* Cambiar color de texto */
+            border: none;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-decoration: none; /* Eliminar subrayado */
+        }
+        a.btn-regresar:hover {
+            background-color: #444; /* Cambiar color al pasar el mouse */
+        }
+        .button-container {
+            text-align: center; 
+        }
+
     </style>
 </head>
 <body>
@@ -76,7 +101,10 @@
       <input type="email" name="email" required>
       <label for="password">Password:</label>
       <input type="password" name="password" required>
-      <button type="submit">Login</button>
+      <div class="button-container">
+        <a href="/" class="btn-regresar">Regresar</a>
+        <button type="submit">Ingresar</button>
+      </div>
     </form>
   </div>
 </body>
