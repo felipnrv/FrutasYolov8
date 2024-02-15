@@ -26,8 +26,8 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 auth = firebase.auth()
 
-LINEA_INICIO = sv.Point(450, 0) #punto de inicio de la linea,la coordenada x es 320 y la coordenada y es 0
-LINEA_FINAL = sv.Point(450, 480) #punto final de la line, la coordenada x es 320 y la coordenada y es 480
+LINEA_INICIO = sv.Point(320, 0) #punto de inicio de la linea,la coordenada x es 320 y la coordenada y es 0
+LINEA_FINAL = sv.Point(320, 480) #punto final de la line, la coordenada x es 320 y la coordenada y es 480
 
 fruta1_grand = 0 # granadilla
 fruta2_mango = 1 # mango
@@ -203,7 +203,8 @@ def main():
     return {"mango: ":mango_out,"maracuya: ":maracuya_out}
     #return render_template('index.html',mango_out_list=mango_out_list)
 
-
+def autenticado():
+    return 'usuario' in session
 
 @app.route('/')#se crea una ruta
 def main_page():
@@ -250,7 +251,7 @@ def login():
             user_data = auth.get_account_info(id_token) #se obtiene la informacion del usuario
             user_uid = user_data['users'][0]['localId']#se obtiene el id del usuario    
             
-            user_ref=db.child(fecha_db).child(hora_db)
+            user_ref=db.child(fecha_db).child(hora_db)#user_ref es la referencia a la base de datos
             user_data={'email':email}
             user_ref.set(user_data)
 
@@ -267,11 +268,14 @@ def login():
 
 @app.route('/video' )#se crea una ruta
 def video():
-    
+    if 'user' not in session:
+        return redirect(url_for('login'))
     return render_template('video.html')
 
 @app.route('/informe')#se crea una ruta
 def informe():
+    if 'user' not in session:
+        return redirect(url_for('login'))
     user_data=session.get('user',{})
     user_uid=user_data.get('uid','')
     user_ref=db.child(fecha_db).child(hora_db)
