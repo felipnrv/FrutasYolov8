@@ -59,6 +59,11 @@
         <div class="report-info">
             <p>Fecha: {{ fecha }}</p>
         </div>
+        <form id="fechaForm">
+            <label for="fecha">Selecciona una fecha:</label>
+            <input type="date" id="fecha" name="fecha" value="{{ fecha }}">
+            <button type="submit">Mostrar Informe</button>
+        </form>
         <table class="report-table">
             <thead>
                 <tr>
@@ -105,6 +110,13 @@
                 Imprimir
             </button>
         </div>
+        <script>
+            document.getElementById('fechaForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Evita que se envíe el formulario automáticamente
+                var fechaSeleccionada = document.getElementById('fecha').value;
+                window.location.href = '/informe?fecha=' + fechaSeleccionada;
+            });
+        </script>
     </div>
 </body>
 </html>

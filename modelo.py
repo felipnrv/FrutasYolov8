@@ -270,17 +270,20 @@ def video_feed():
 
 @app.route('/informe')
 def informe():
+
+    fecha_seleccion=request.args.get('fecha',dt.date.today()) 
+
     connection = sql.connect('frutascont.db')
     cursor = connection.cursor()
 
     # Obtiene los registros de la tabla conteo_frutas
-    cursor.execute('''SELECT * FROM conteo_frutas''')
+    cursor.execute('''SELECT * FROM conteo_frutas WHERE fecha_creacion = ?''', (fecha_seleccion,))
     registros = cursor.fetchall()
 
     # Cierra la conexión con la base de datos
     connection.close()
 
-    return render_template('informe.html',registros=registros,fecha=dt.date.today())
+    return render_template('informe.html',registros=registros,fecha=fecha_seleccion)
 
 
 
