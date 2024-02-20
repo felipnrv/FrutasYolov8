@@ -152,7 +152,7 @@ def main():
                     bytearray(encodedImage) + b'\r\n')
             
   
-def base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out,id):
+def base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
  
         # Conecta con la base de datos o crea una nueva si no existe
         connection = sql.connect('frutascont.db')
@@ -167,16 +167,23 @@ def base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out,id):
                             pitahaya_out INTEGER,
                             aguacate_out INTEGER,
                             tomatearbol_out INTEGER,
-                            fecha_creacion DATETIME NOT NULL
+                            fecha_creacion DATE NOT NULL
 
                         )''')
-        data=(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out,dt.datetime.now())
-        # Inserta los valores en la tabla
+        cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (dt.date.today(),))
+        existing_record = cursor.fetchone()
 
-        cursor.execute("""
-        INSERT OR REPLACE INTO conteo_frutas (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion)
-        VALUES (?, ?, ?, ?, ?)
-    """, data)
+        if existing_record:
+            # Si hay un registro con la misma fecha, actualiza los valores
+            cursor.execute('''UPDATE conteo_frutas SET maracuya_out=?, pitahaya_out=?, aguacate_out=?, tomatearbol_out=? WHERE fecha_creacion=?''',
+                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, dt.date.today()))
+            #print(f"Registro con fecha {dt.datetime.today()} actualizado.")
+        else:
+            # Si no hay un registro con la misma fecha, inserta uno nuevo
+            cursor.execute('''INSERT INTO conteo_frutas (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion) VALUES (?, ?, ?, ?, ?)''',
+                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, dt.date.today()))
+            #print(f"Nuevo registro con fecha {dt.datetime.today()} insertado.")
+
         #cursor.execute('''INSERT INTO conteo_frutas 
          #              (maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out) VALUES (?, ?,?,?)''', 
           #             (maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out))
