@@ -62,31 +62,36 @@
         <table class="report-table">
             <thead>
                 <tr>
-                    <th>Item</th>
                     <th>Fotos</th>
+                    <th>Item</th>
+                    
                     <th>Conteo</th>
                 </tr>
                 
                 <tbody>
                     {% for registro in registros %}
                     <tr>
+                        
+                        <td><img class="fruit-image" src="https://5aldia.cl/wp-content/uploads/2021/11/maracuya.webp" alt="Maracuya"></a></td>
                         <td>Maracuyá</td>
-                        <td><a href="https://5aldia.cl/wp-content/uploads/2021/11/maracuya.webp"><img class="fruit-image" src="{{ url_for('static', filename='fondo.jpg') }}" alt="Maracuya"></a></td>
                         <td>{{ registro[1] }}</td>
                     </tr>
                     <tr>
+                        
+                        <td><img class="fruit-image" src="https://exoticfruitbox.com/wp-content/uploads/2015/10/aguacate.jpg" alt="Aguacate"></a></td>
                         <td>Aguacate</td>
-                        <td><a href="https://www.ejemplo.com/aguacate"><img class="fruit-image" src="{{ url_for('static', filename='aguacate.jpg') }}" alt="Aguacate"></a></td>
                         <td>{{ registro[3] }}</td>
                     </tr>
                     <tr>
+                        
+                        <td><img class="fruit-image" src="https://frutabona.com/wp/wp-content/uploads/2019/08/2-piathaya-roja.jpg" alt="Pitahaya"></a></td>
                         <td>Pitahaya</td>
-                        <td><a href="https://www.ejemplo.com/pitahaya"><img class="fruit-image" src="{{ url_for('static', filename='pitahaya.jpg') }}" alt="Pitahaya"></a></td>
                         <td>{{ registro[2] }}</td>
                     </tr>
                     <tr>
+                        
+                        <td><img class="fruit-image" src="https://lavaquita.co/cdn/shop/products/c6e77264-a4db-4f70-af17-ce84d0da417f_512x512.png?v=1622197586" alt="Tomate de Árbol"></a></td>
                         <td>Tomate de Árbol</td>
-                        <td><a href="https://www.ejemplo.com/tomate_de_arbol"><img class="fruit-image" src="{{ url_for('static', filename='tomate_de_arbol.jpg') }}" alt="Tomate de Arbol"></a></td>
                         <td>{{ registro[4] }}</td>
                     </tr>
                     {% endfor %}
