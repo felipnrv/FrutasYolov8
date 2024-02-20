@@ -143,7 +143,7 @@ def main():
             if tomatearbol_out != 0:
                 print('Tomatearbol', tomatearbol_out)
 
-            base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
+            base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
             
             (flag, encodedImage) = cv2.imencode(".jpg", frame)
             if not flag:
@@ -152,7 +152,7 @@ def main():
                     bytearray(encodedImage) + b'\r\n')
             
   
-def base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
+def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
  
         # Conecta con la base de datos o crea una nueva si no existe
         connection = sql.connect('frutascont.db')
@@ -191,12 +191,20 @@ def base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
         # Confirma los cambios
         connection.commit()
 
-    
         connection.close()
 
+def registro_user():
+    connection = sql.connect('usuarios.db')
+    cursor = connection.cursor()
 
-
-
+    cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            email TEXT UNIQUE NOT NULL,
+                            password TEXT NOT NULL,
+                            nombre TEXT NOT NULL
+                        )''')
+    connection.commit()
+    connection.close()
 
 @app.route('/')#se crea una ruta
 def main_page():
@@ -205,17 +213,19 @@ def main_page():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    registro_user()
     if request.method == 'POST':
         # Obtener datos del formulario
         nombre = request.form['nombre']
-        apellido = request.form['apellido']
         email = request.form['email']
         password = request.form['password']
 
-        # Enviar datos a la base de datos de Firebase
-       
-        	
-        # Redirigir a la página principal después del registro exitoso
+        connection = sql.connect('usuarios.db')
+        cursor = connection.cursor()
+
+        cursor.execute('''INSERT INTO usuarios (email, password,nombre) VALUES (?, ?, ?)''', (email, password,nombre))
+        connection.commit()
+        connection.close()
         return redirect(url_for('main_page'))
 
     # Renderizar la plantilla de registro
@@ -227,6 +237,23 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+
+        connection = sql.connect('usuarios.db')
+        cursor = connection.cursor()
+        if not email or not password:
+            return "Por favor, ingrese su nombre de usuario y contraseña."
+        cursor.execute('''SELECT * FROM usuarios WHERE email=? AND password=?''', (email, password))
+        usuario = cursor.fetchone()
+
+        if usuario:
+                # Guardar el nombre de usuario en la sesión
+                session['email'] = email
+                return redirect(url_for('video'))
+        else:
+                return "Nombre de usuario o contraseña incorrectos."
+        
+        connection.close()
+        
 
     return render_template('login.html')
 
@@ -243,8 +270,17 @@ def video_feed():
 
 @app.route('/informe')
 def informe():
-    
-    return render_template('informe.html',user_data=user_info,fecha=fecha)
+    connection = sql.connect('frutascont.db')
+    cursor = connection.cursor()
+
+    # Obtiene los registros de la tabla conteo_frutas
+    cursor.execute('''SELECT * FROM conteo_frutas''')
+    registros = cursor.fetchall()
+
+    # Cierra la conexión con la base de datos
+    connection.close()
+
+    return render_template('informe.html',registros=registros,fecha=dt.date.today())
 
 
 
