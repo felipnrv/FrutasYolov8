@@ -1,14 +1,12 @@
 import cv2
 import os
 # Abre el video en vivo
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 # Inicializa el contador de capturas
 capturas = 0
 
-directorio_capturas = 'D:\Felipe\Codigo\Img'
-
-        
+directorio_capturas = 'D:\Felipe\Codigo\Img\pitahaya\_4'
 
 while True:
     # Lee el frame del video
@@ -18,7 +16,7 @@ while True:
     cv2.imshow('Video en vivo', frame)
 
     # Guarda el frame como una imagen
-    cv2.imwrite(os.path.join(directorio_capturas, f'captura_{capturas}.jpg'), frame)
+    cv2.imwrite(os.path.join(directorio_capturas, f'pty_{capturas}.jpg'), frame)
 
     # Incrementa el contador de capturas
     capturas += 1

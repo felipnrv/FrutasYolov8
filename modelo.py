@@ -1,46 +1,26 @@
+#pip install -r requerimientos.txt
+
 import cv2
 from ultralytics import YOLO
 import supervision as sv
-import pyrebase
+import os
+import sqlite3 as sql 
 from flask import Flask,render_template,Response,request,redirect,url_for,session 
 import datetime as dt
-import pandas as pd
-import matplotlib.pyplot as plt
 
-
+key=os.urandom(12)
 app = Flask(__name__,template_folder='plantilla') #se inicializa la aplicacion
-app.secret_key = 'kf28721grR'
+app.secret_key = 'key'
 
-config = {
-        "apiKey": "AIzaSyCC1C7eIcb6Q0-WeWKuzSrZNwVoSyVf8Lw",
-        "authDomain": "dbfrutas-dd3ba.firebaseapp.com",
-        "projectId": "dbfrutas-dd3ba",
-        "databaseURL": "https://dbfrutas-dd3ba-default-rtdb.firebaseio.com/",
-        "storageBucket": "dbfrutas-dd3ba.appspot.com",
-        "messagingSenderId": "404825544625",
-        "appId": "1:404825544625:web:efaa68356d01d1153ccf90",
-        "measurementId": "G-EMQTJ61ZL6"
-    }
 
-firebase = pyrebase.initialize_app(config)
-db = firebase.database()
-auth = firebase.auth()
-
-LINEA_INICIO = sv.Point(320, 0) #punto de inicio de la linea,la coordenada x es 320 y la coordenada y es 0
+LINEA_INICIO = sv.Point(320, 0)
+ #punto de inicio de la linea,la coordenada x es 320 y la coordenada y es 0
 LINEA_FINAL = sv.Point(320, 480) #punto final de la line, la coordenada x es 320 y la coordenada y es 480
 
-fruta1_grand = 0 # granadilla
-fruta2_mango = 1 # mango
-fruta3_marac = 2 # maracuya
-fruta4_pitah = 3 # pitahaya
-fruta5_tomate = 4# tomate de arbol
-
-fecha_db = dt.datetime.now()
-fecha_db = fecha_db.strftime(format='%Y-%m-%d')
-
-hora_db = dt.datetime.now()
-hora_db = hora_db.strftime(format='%H:%M')
-#una clase es un objeto que tiene atributos y metodos y una funcion es un bloque de codigo que se ejecuta cuando se llama
+fruta1_aguact = 0 # aguacate
+fruta2_marac = 1 # maracuya
+fruta3_pitah = 2 # pitahaya
+fruta4_tomate = 3# tomate de arbol
 
 
 class linea_conteo_class():
@@ -62,19 +42,15 @@ class linea_conteo_class():
 
         return conteo_in,conteo_out
 
-#@app.route('/')
 
 def main():
 
-    mango_out=0
-    maracuya_out=0
-
+  
     linea = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL) #se crea el contador de la linea
     linea_1 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
-    linea_2 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)#line counter es el contador de la linea
+    linea_2 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
     linea_3 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
     linea_4 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
-    linea_5 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
 
     #LinezoneAnnotator es donde se esconde el contador de la linea
     linea_anotador = sv.LineZoneAnnotator(thickness=2, text_thickness=1, text_scale=0.5) #se crea el contador de la linea
@@ -82,29 +58,27 @@ def main():
     caja_anotador = sv.BoxAnnotator(thickness=2,text_thickness=1,text_scale=0.5) #se crea el objeto que permite anotar las cajas
 
     #se crea un objeto de la clase linea_conteo_class
-    granadilla = linea_conteo_class(fruta1_grand, linea_1)
-    mango = linea_conteo_class(fruta2_mango, linea_2)
-    maracuya = linea_conteo_class(fruta3_marac, linea_3)
-    pitahaya = linea_conteo_class(fruta4_pitah, linea_4)
-    tomatearbol = linea_conteo_class(fruta5_tomate, linea_5)
+    aguacate = linea_conteo_class(fruta1_aguact, linea_1) #linea_1 es el contador de la linea
+    maracuya = linea_conteo_class(fruta2_marac, linea_2)
+    pitahaya = linea_conteo_class(fruta3_pitah, linea_3)
+    tomatearbol = linea_conteo_class(fruta4_tomate, linea_4)
 
-    model = YOLO("D:/Felipe/Codigo/Model/frutasmdl.pt")
+    model = YOLO("./modelofrutas.pt")
 
     cam_sources=[0,1]
     for source in cam_sources:
-        for result in model.track(source=source, show=False, stream=True, agnostic_nms=True):
+        for result in model.track(source=source, show=False, stream=True, agnostic_nms=True,conf=0.5):
             
             frame = result.orig_img
 
-            
             detections = sv.Detections.from_yolov8(result)
 
-            detections = detections[detections.class_id != 10]
+            #detections = detections[detections.class_id != 10]
             detections1 = detections[detections.class_id == 0]
             detections2 = detections[detections.class_id == 1]
             detections3 = detections[detections.class_id == 2]
             detections4 = detections[detections.class_id == 3]
-            detections5 = detections[detections.class_id == 4]
+            
         
             if result.boxes.id is not None:#es para el conteo de las detecciones
                 detections1.tracker_id = result.boxes.id.cpu().numpy().astype(int)
@@ -118,48 +92,34 @@ def main():
             if result.boxes.id is not None: 
                 detections4.tracker_id = result.boxes.id.cpu().numpy().astype(int)
             
-            if result.boxes.id is not None: 
-                detections5.tracker_id = result.boxes.id.cpu().numpy().astype(int)
-        
+            
             
             labels = [ #se crea una lista con las etiquetas de las detecciones
             f"# {class_id}{model.model.names[class_id]} {confidence:0.2f}"
             for _, confidence, class_id,tracker_id
-            in detections 
+            in detections #deteccions sirve para obtener las detecciones diferentes a 10
             ]
-            #Detect specific objects
-            maracuya_in,maracuya_out = maracuya.detections(result)
-            granadilla_in,granadilla_out = granadilla.detections(result)
-            mango_in,mango_out = mango.detections(result)
-            pitahaya_in,pitahaya_out = pitahaya.detections(result)
-            tomatearbol_in,tomatearbol_out = tomatearbol.detections(result)
+            
             
             frame = caja_anotador.annotate(scene=frame, detections=detections, labels=labels)
 
             linea_1.trigger(detections=detections1)
-            linea_anotador.annotate(frame=frame, line_counter=linea)
-                
             linea_2.trigger(detections=detections2)
-            linea_anotador.annotate(frame=frame, line_counter=linea)
-
             linea_3.trigger(detections=detections3)
-            linea_anotador.annotate(frame=frame, line_counter=linea)
-
             linea_4.trigger(detections=detections4)
-            linea_anotador.annotate(frame=frame, line_counter=linea)
-
-            linea_5.trigger(detections=detections5)
-            linea_anotador.annotate(frame=frame, line_counter=linea)
+            linea_anotador.annotate(frame=frame, line_counter=linea)#line_counter es el contador de la linea, 
+            #se usa linea y no linea_1 porque se quiere que el contador de la linea sea el mismo para todas las frutas
+    
+            maracuya_in,maracuya_out = maracuya.detections(result)
+            aguacate_in,aguacate_out = aguacate.detections(result)
+            pitahaya_in,pitahaya_out = pitahaya.detections(result)
+            tomatearbol_in,tomatearbol_out = tomatearbol.detections(result)
 
             y_offset = 50  # Espacio vertical entre cada línea de texto
 
-            mango_text = f"Mango: {mango_out}"
-            cv2.putText(frame, mango_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#color negro en rgb es (0,0,0)
+            aguacate_text = f"Aguacate: {aguacate_out}"
+            cv2.putText(frame, aguacate_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#color negro en rgb es (0,0,0)
             y_offset += 30  # Incrementar el desplazamiento vertical
-
-            granadilla_text = f"Granadilla: {granadilla_out}"
-            cv2.putText(frame, granadilla_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#0.5 es el tamaño de la letra,1 es el grosor de la letra
-            y_offset += 30
 
             maracuya_text = f"Maracuya: {maracuya_out}"
             cv2.putText(frame, maracuya_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
@@ -173,10 +133,9 @@ def main():
             cv2.putText(frame, tomatearbol_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
             y_offset += 30
 
-            if mango_out != 0:
-                print('Mango', mango_out)
-            if granadilla_out != 0:
-                print('Granadilla', granadilla_out)
+            
+            if aguacate_out != 0:
+                print('Aguacate', aguacate_out)
             if maracuya_out != 0:
                 print('Maracuya', maracuya_out)
             if pitahaya_out != 0:
@@ -184,27 +143,53 @@ def main():
             if tomatearbol_out != 0:
                 print('Tomatearbol', tomatearbol_out)
 
+            base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
             
-            
-            db.child(fecha_db).child(hora_db).update(
-                {"Mango": mango_out,
-                "Granadilla": granadilla_out,
-                "Maracuya": maracuya_out,
-                "Pitahaya": pitahaya_out,
-                "Tomatearbol": tomatearbol_out})
-            
-
             (flag, encodedImage) = cv2.imencode(".jpg", frame)
             if not flag:
                     continue
             yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                     bytearray(encodedImage) + b'\r\n')
-        
-    return {"mango: ":mango_out,"maracuya: ":maracuya_out}
-    #return render_template('index.html',mango_out_list=mango_out_list)
+            
+  
+def base_de_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out,id):
+ 
+        # Conecta con la base de datos o crea una nueva si no existe
+        connection = sql.connect('frutascont.db')
 
-def autenticado():
-    return 'usuario' in session
+        # Crea un cursor para ejecutar consultas SQL
+        cursor = connection.cursor()
+
+        # Crea la tabla si no existe
+        cursor.execute('''CREATE TABLE IF NOT EXISTS conteo_frutas (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            maracuya_out INTEGER,
+                            pitahaya_out INTEGER,
+                            aguacate_out INTEGER,
+                            tomatearbol_out INTEGER,
+                            fecha_creacion DATETIME NOT NULL
+
+                        )''')
+        data=(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out,dt.datetime.now())
+        # Inserta los valores en la tabla
+
+        cursor.execute("""
+        INSERT OR REPLACE INTO conteo_frutas (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion)
+        VALUES (?, ?, ?, ?, ?)
+    """, data)
+        #cursor.execute('''INSERT INTO conteo_frutas 
+         #              (maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out) VALUES (?, ?,?,?)''', 
+          #             (maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out))
+
+        # Confirma los cambios
+        connection.commit()
+
+    
+        connection.close()
+
+
+
+
 
 @app.route('/')#se crea una ruta
 def main_page():
@@ -221,14 +206,7 @@ def register():
         password = request.form['password']
 
         # Enviar datos a la base de datos de Firebase
-        db.child('Registro Usuarios').push({
-            'nombre': nombre,
-            'apellido': apellido,
-            'email': email,
-            'fecha':fecha_db
-        })
-        
-        user=auth.create_user_with_email_and_password(email, password)
+       
         	
         # Redirigir a la página principal después del registro exitoso
         return redirect(url_for('main_page'))
@@ -243,51 +221,27 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        # Firebase Authentication
-        try:
-            user = auth.sign_in_with_email_and_password(email, password)
-
-            id_token = user['idToken'] #se obtiene el token de autenticacion
-            user_data = auth.get_account_info(id_token) #se obtiene la informacion del usuario
-            user_uid = user_data['users'][0]['localId']#se obtiene el id del usuario    
-            
-            user_ref=db.child(fecha_db).child(hora_db)#user_ref es la referencia a la base de datos
-            user_data={'email':email}
-            user_ref.set(user_data)
-
-            session['user'] = user_data
-            #user_data =auth.get_user(user['idToken'])
-            return redirect(url_for('video'))#,uid=user_data.uid,email=user_data.email))
-        except Exception as e:
-            print("Error:", e)
-            return render_template('login.html', error=str(e))
-
     return render_template('login.html')
 
 
 
-@app.route('/video' )#se crea una ruta
+@app.route('/video' )
 def video():
-    if 'user' not in session:
-        return redirect(url_for('login'))
+    
     return render_template('video.html')
-
-@app.route('/informe')#se crea una ruta
-def informe():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    user_data=session.get('user',{})
-    user_uid=user_data.get('uid','')
-    user_ref=db.child(fecha_db).child(hora_db)
-    user_info=user_ref.get().val()#se obtiene la informacion del usuario
-    fecha = fecha_db
-    return render_template('informe.html',user_data=user_info,fecha=fecha)
 
 @app.route('/video_feed')
 def video_feed():
     return Response(main(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+@app.route('/informe')
+def informe():
+    
+    return render_template('informe.html',user_data=user_info,fecha=fecha)
+
+
+
 if __name__ == "__main__":
-    #main()
+   
     app.run(debug=True)
 
