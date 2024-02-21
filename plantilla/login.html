@@ -118,6 +118,27 @@
         <button type="submit">Ingresar</button>
       </div>
     </form>
+    <script>
+        // Agregar un listener para el envío del formulario
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            // Obtener los valores de los campos de email y contraseña
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            // Aquí deberías agregar la lógica para enviar los datos al servidor
+            // y verificar si el inicio de sesión es exitoso. 
+            // Por ahora, simplemente estamos simulando un inicio de sesión exitoso si ambos campos están llenos.
+            if (email && password) {
+                // Mostrar el campo adicional para el nombre del registro
+                document.getElementById('nombreRegistroField').classList.remove('hidden');
+            } else {
+                // Evitar que se envíe el formulario si falta algún campo
+                event.preventDefault();
+                alert('Por favor, complete todos los campos.');
+            }
+        });
+    </script>
+
   </div>
 </body>
 </html>

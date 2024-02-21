@@ -168,27 +168,24 @@ def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
                             aguacate_out INTEGER,
                             tomatearbol_out INTEGER,
                             fecha_creacion DATE NOT NULL
+                            
 
                         )''')
-        cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (dt.date.today(),))
+        fecha_creacion = dt.datetime.now().strftime('%d-%m-%Y')
+
+        cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (fecha_creacion,))
         existing_record = cursor.fetchone()
 
         if existing_record:
             # Si hay un registro con la misma fecha, actualiza los valores
             cursor.execute('''UPDATE conteo_frutas SET maracuya_out=?, pitahaya_out=?, aguacate_out=?, tomatearbol_out=? WHERE fecha_creacion=?''',
-                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, dt.date.today()))
-            #print(f"Registro con fecha {dt.datetime.today()} actualizado.")
+                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion))
+            
         else:
             # Si no hay un registro con la misma fecha, inserta uno nuevo
             cursor.execute('''INSERT INTO conteo_frutas (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion) VALUES (?, ?, ?, ?, ?)''',
-                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, dt.date.today()))
-            #print(f"Nuevo registro con fecha {dt.datetime.today()} insertado.")
-
-        #cursor.execute('''INSERT INTO conteo_frutas 
-         #              (maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out) VALUES (?, ?,?,?)''', 
-          #             (maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out))
-
-        # Confirma los cambios
+                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion))
+            
         connection.commit()
 
         connection.close()

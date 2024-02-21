@@ -75,6 +75,13 @@
         <form id="fechaForm">
             <label for="fecha">Selecciona una fecha:</label>
             <input type="date" id="fecha" name="fecha" value="{{ fecha }}">
+            <label for="hora">Selecciona una hora:</label>
+            <select id="hora" name="hora">
+                {% for hora in horas %}
+                    <option value="{{ hora }}">{{ hora }}</option>
+                {% endfor %}
+            </select>
+        
             <button type="submit">Mostrar Informe</button>
         </form>
         <table class="report-table">
@@ -82,7 +89,6 @@
                 <tr>
                     <th>Fotos</th>
                     <th>Item</th>
-                    
                     <th>Conteo</th>
                 </tr>
                 
