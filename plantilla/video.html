@@ -12,6 +12,19 @@
             background-color: #f2f2f2;
             overflow-y: hidden; /* Esto oculta la barra de desplazamiento vertical */
         }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.postimg.cc/GpTTBPSm/fondo3.png');
+             /* Aplica un efecto de desenfoque de 5px a la imagen de fondo */
+            z-index: -1; /* Asegura que el pseudo-elemento esté detrás de todos los elementos del cuerpo */
+            background-size: cover;
+            background-position: center;
+        }
 
         .container {
             max-width: 640px;

@@ -9,15 +9,20 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('https://media.istockphoto.com/id/1309815703/es/vector/ilustraci%C3%B3n-de-fruta-fresca-elementos-vectoriales-dibujados-a-mano.jpg?s=612x612&w=0&k=20&c=XyRXcehFnv6nNlGfbWBjtfuieQIlYMvBHE8hkApx2vc=');
+      background-image: url('https://i.postimg.cc/GpTTBPSm/fondo3.png');
       background-size: cover;
-      background-position: center center;
+      background-position: center;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
     }
-
+    
     .container {
-      max-width: 500px;
+      max-width: 600px; /* Aumenta el ancho máximo del contenedor */
       margin: 50px auto;
-      padding: 20px;
+      padding: 30px; /* Aumenta el relleno del contenedor */
       background-color: rgba(255, 255, 255, 0.8);
       border-radius: 5px;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -39,8 +44,8 @@
     input[type="text"],
     input[type="email"],
     input[type="password"] {
-      width: 100%;
-      padding: 10px;
+      width: calc(100% - 20px); /* Reduce el ancho del campo de entrada */
+      padding: 12px; /* Aumenta el relleno */
       font-size: 1.2rem;
       border-radius: 5px;
       border: 1px solid #ccc;
@@ -48,11 +53,10 @@
       margin-bottom: 20px;
     }
 
-    /* Estilo del botón enviar */
     input[type="submit"] {
       text-align: center;
       display: inline-block;
-      margin: 0 ;
+      margin: 0;
       padding: 10px 20px;
       font-size: 1rem;
       background-color: #404cc7;
@@ -61,32 +65,34 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      text-transform: uppercase; /* Opcional: convertir texto a mayúsculas */
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Agregar sombra al botón */
+      text-transform: uppercase;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
     }
 
     input[type="submit"]:hover {
       background-color: #303aa5;
     }
-    a.btn-regresar { /* Convertir botón Regresar en un enlace */
+
+    a.btn-regresar {
       text-align: center;
-      display: inline-block; /* Cambiar a inline-block */
-      margin: 0; /* Eliminar margen superior */
-      padding: 8px 18px; /* Reducir tamaño */
-      font-size: 1rem; /* Reducir tamaño de fuente */
-      background-color: #575656; /* Cambiar color */
-      color: #fff; /* Cambiar color de texto */
+      display: inline-block;
+      margin: 0;
+      padding: 8px 18px;
+      font-size: 1rem;
+      background-color: #575656;
+      color: #fff;
       border: none;
       transition: background-color 0.3s ease;
       border-radius: 5px;
       cursor: pointer;
       text-transform: uppercase;
-      text-decoration: none; /* Eliminar subrayado */
+      text-decoration: none;
     }
 
     a.btn-regresar:hover {
-      background-color: #444; /* Cambiar color al pasar el mouse */
+      background-color: #444;
     }
+
     .button-container {
       text-align: center; 
     }
@@ -106,7 +112,6 @@
         <a href="/" class="btn-regresar">Regresar</a>
         <input type="submit" value="Enviar" onclick="location.href='main.html'">
       </div>
-      
     </form>
   </div>
 </body>
