@@ -102,12 +102,21 @@
         .button-container {
             text-align: center; 
         }
+        .error-message {
+            text-align: center; /* Centra el texto horizontalmente */
+            margin-top: 20px; /* Espacio superior para separar del resto del contenido */
+            color: red; /* Color del texto */
+        }
 
     </style>
 </head>
 <body>
   <div class="container">
     <h1>Login</h1>
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+    
     <form method="post" action="/login">
       <label for="email">Email:</label>
       <input type="email" name="email" required>

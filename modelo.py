@@ -169,9 +169,9 @@ def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
                             tomatearbol_out INTEGER,
                             fecha_creacion DATE NOT NULL
                             
-
                         )''')
-        fecha_creacion = dt.datetime.now().strftime('%d-%m-%Y')
+        
+        fecha_creacion = dt.datetime.today().strftime('%Y-%m-%d')
 
         cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (fecha_creacion,))
         existing_record = cursor.fetchone()
@@ -231,15 +231,18 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error=None
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
 
         connection = sql.connect('usuarios.db')
         cursor = connection.cursor()
+
         if not email or not password:
-            return "Por favor, ingrese su nombre de usuario y contraseña."
+            error = "Por favor, ingrese su nombre de usuario y contraseña."
         cursor.execute('''SELECT * FROM usuarios WHERE email=? AND password=?''', (email, password))
+        
         usuario = cursor.fetchone()
 
         if usuario:
@@ -247,12 +250,12 @@ def login():
                 session['email'] = email
                 return redirect(url_for('video'))
         else:
-                return "Nombre de usuario o contraseña incorrectos."
+                error = "Usuario o contraseña incorrectos."
         
         connection.close()
         
 
-    return render_template('login.html')
+    return render_template('login.html',error=error)
 
 
 
@@ -281,7 +284,6 @@ def informe():
     connection.close()
 
     return render_template('informe.html',registros=registros,fecha=fecha_seleccion)
-
 
 
 if __name__ == "__main__":
