@@ -91,15 +91,12 @@ def main():
             
             if result.boxes.id is not None: 
                 detections4.tracker_id = result.boxes.id.cpu().numpy().astype(int)
-            
-            
-            
+                        
             labels = [ #se crea una lista con las etiquetas de las detecciones
             f"# {class_id}{model.model.names[class_id]} {confidence:0.2f}"
             for _, confidence, class_id,tracker_id
             in detections #deteccions sirve para obtener las detecciones diferentes a 10
             ]
-            
             
             frame = caja_anotador.annotate(scene=frame, detections=detections, labels=labels)
 
