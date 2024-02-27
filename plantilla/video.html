@@ -20,8 +20,7 @@
             width: 100%;
             height: 100%;
             background-image: url('https://i.postimg.cc/GpTTBPSm/fondo3.png');
-             /* Aplica un efecto de desenfoque de 5px a la imagen de fondo */
-            z-index: -1; /* Asegura que el pseudo-elemento esté detrás de todos los elementos del cuerpo */
+            z-index: -1; 
             background-size: cover;
             background-position: center;
         }
@@ -63,14 +62,16 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
+            text-align: center;
+        }
+        
+        .button-container button,
+        .button-container a {
             background-color: #392cc7; 
             color: white;
             padding: 20px 36px;
-            text-align: center;
-            display: flex;
-            justify-content: center;
             font-size: 19px;
-            margin: 4px 2px;
+            margin: 10px 0;
             cursor: pointer;
             border: none;
             border-radius: 4px;
@@ -78,18 +79,11 @@
             transition: box-shadow 0.3s ease-in-out; 
             outline: none;
             text-decoration: none;
-             
         }
         
-        .button-container a {
-            text-decoration: none; /* Quitar subrayado del enlace */
-            color: white;
-            margin:0 10px;
-            display: block;
-        }
-        
-        .button-container:hover a {
-            color: #2b2a38; /* Cambiar color del texto al pasar el mouse */
+        .button-container button:hover,
+        .button-container a:hover {
+            background-color: #2b2a38; /* Cambiar color de fondo al pasar el mouse */
         }
 
     </style>
@@ -101,11 +95,44 @@
             <iframe src="{{ url_for('video_feed') }}" ></iframe>
         </div>
         <div class="button-container">
+            <button onclick="crearBaseDatos()">Crear Base de Datos</button> 
+            <button onclick="redirigirInforme()">Informe</button>
            
-            <a href="{{ url_for('informe') }}">Informe</a>
-            
+
         </div>
-        
     </div>
+    
+    <script>
+        function crearBaseDatos() {
+            fetch('/crear_base_datos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Base de datos creada correctamente');
+                } else {
+                    console.error('Error al crear la base de datos');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+        }
+      
+    </script>
+    <script>
+        function redirigirInforme() {
+            // Redirigir al usuario a la página de informe
+            window.location.href = "{{ url_for('informe') }}";
+        }
+    </script>
+
+   
+    
+
+
 </body>
 </html>
