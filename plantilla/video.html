@@ -94,44 +94,30 @@
         <div class="video-container">
             <iframe src="{{ url_for('video_feed') }}" ></iframe>
         </div>
-        <div class="button-container">
-            <button onclick="crearBaseDatos()">Crear Base de Datos</button> 
-            <button onclick="redirigirInforme()">Informe</button>
-           
-
+        <div class="button-container"> 
+            <button onclick="redirigir_informe()">Informe</button>
+            <button onclick="cerrarNavegador()">Cerrar</button>
+            
         </div>
     </div>
     
+
     <script>
-        function crearBaseDatos() {
-            fetch('/crear_base_datos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Base de datos creada correctamente');
-                } else {
-                    console.error('Error al crear la base de datos');
-                }
-            })
-            .catch(error => {
-                console.error('Error de red:', error);
-            });
-        }
-      
-    </script>
-    <script>
-        function redirigirInforme() {
+        function redirigir_informe() {
             // Redirigir al usuario a la página de informe
             window.location.href = "{{ url_for('informe') }}";
         }
     </script>
-
-   
+    <script>
+        function cerrarNavegador() {
+            if (confirm("¿Estás seguro de que quieres cerrar el navegador?")) {
+                // Cierra la ventana del navegador
+                window.close();
+            }
+        }
+    </script>
     
+   
 
 
 </body>

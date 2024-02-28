@@ -22,7 +22,6 @@ fruta2_marac = 1 # maracuya
 fruta3_pitah = 2 # pitahaya
 fruta4_tomate = 3# tomate de arbol
 
-conteo_lista=[]
 
 class linea_conteo_class():
     def __init__(self,id_clase,linea_conteo):
@@ -131,6 +130,10 @@ def main():
             cv2.putText(frame, tomatearbol_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
             y_offset += 30
 
+            flecha = "-------->"
+            cv2.putText(frame, flecha, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
+            y_offset += 30
+
             
             if aguacate_out != 0:
                 print('Aguacate', aguacate_out)
@@ -141,22 +144,20 @@ def main():
             if tomatearbol_out != 0:
                 print('Tomatearbol', tomatearbol_out)
 
-            
-            #base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
+            base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
             
             (flag, encodedImage) = cv2.imencode(".jpg", frame)
             if not flag:
                     continue
             yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                     bytearray(encodedImage) + b'\r\n')
-    return maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out
-
-
-    
-def base_datos_conteo():
-        
+            
+  
+def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
+ 
         # Conecta con la base de datos o crea una nueva si no existe
         connection = sql.connect('frutascont.db')
+
         # Crea un cursor para ejecutar consultas SQL
         cursor = connection.cursor()
 
@@ -167,58 +168,28 @@ def base_datos_conteo():
                             pitahaya_out INTEGER,
                             aguacate_out INTEGER,
                             tomatearbol_out INTEGER,
-                            fecha_creacion DATE NOT NULL,
-                            hora TIME NOT NULL
+                            fecha_creacion DATE NOT NULL
                             
                         )''')
         
+        fecha_creacion = dt.datetime.today().strftime('%Y-%m-%d')
+
+        cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (fecha_creacion,))
+        existing_record = cursor.fetchone()
+
+        if existing_record:
+            # Si hay un registro con la misma fecha, actualiza los valores
+            cursor.execute('''UPDATE conteo_frutas SET maracuya_out=?, pitahaya_out=?, aguacate_out=?, tomatearbol_out=? WHERE fecha_creacion=?''',
+                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion))
+            
+        else:
+            # Si no hay un registro con la misma fecha, inserta uno nuevo
+            cursor.execute('''INSERT INTO conteo_frutas (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion) VALUES (?, ?, ?, ?, ?)''',
+                        (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion))
+            
         connection.commit()
+
         connection.close()
-
-# Ruta para manejar la solicitud de guardar datos
-@app.route('/guardar_datos', methods=['POST'])
-def guardar_datos(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
-    # Extraer datos del formulario
-    
-    # Obtener fecha y hora actual
-    fecha_creacion = dt.datetime.today().strftime('%Y-%m-%d')
-    hora = dt.datetime.now().strftime('%H:%M')
-
-            # Agregar datos a la lista temporal
-    conteo_lista.append({
-                'maracuya_out': maracuya_out,
-                'pitahaya_out': pitahaya_out,
-                'aguacate_out': aguacate_out,
-                'tomatearbol_out': tomatearbol_out,
-                'fecha_creacion': fecha_creacion,
-                'hora': hora
-            })
-          
-
-    # Guardar datos en la base de datos
-    connection = sql.connect('frutascont.db')
-    cursor = connection.cursor()
-
-    for conteo in conteo_lista:
-        maracuya_out = conteo['maracuya_out']
-        pitahaya_out = conteo['pitahaya_out']
-        aguacate_out = conteo['aguacate_out']
-        tomatearbol_out = conteo['tomatearbol_out']
-        fecha_creacion = conteo['fecha_creacion']
-        hora = conteo['hora']
-
-        cursor.execute('''INSERT INTO conteo_frutas 
-                          (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion, hora) 
-                          VALUES (?, ?, ?, ?, ?, ?)''',
-                       (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion, hora))
-
-    connection.commit()
-    connection.close()
-
-
-
-
-    
 
 def registro_user():
     connection = sql.connect('usuarios.db')
@@ -232,8 +203,6 @@ def registro_user():
                         )''')
     connection.commit()
     connection.close()
-
-
 
 @app.route('/')#se crea una ruta
 def main_page():
@@ -289,12 +258,8 @@ def login():
 
     return render_template('login.html',error=error)
 
-@app.route('/crear_base_datos', methods=['POST'])
-def crear_base_datos():
-    # Llama a la función base_datos_conteo() para crear la base de datos
-    base_datos_conteo()
 
-    
+
 @app.route('/video' )
 def video():
     

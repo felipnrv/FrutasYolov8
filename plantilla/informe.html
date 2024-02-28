@@ -122,6 +122,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/3099/3099914.png" alt="Imprimir" width="25" height="25">
                 Imprimir
             </button>
+            <button onclick="cerrarNavegador()">Cerrar</button>
         </div>
         <script>
             document.getElementById('fechaForm').addEventListener('submit', function(event) {
@@ -129,6 +130,14 @@
                 var fechaSeleccionada = document.getElementById('fecha').value;
                 window.location.href = '/informe?fecha=' + fechaSeleccionada;
             });
+        </script>
+        <script>
+            function cerrarNavegador() {
+                if (confirm("¿Estás seguro de que quieres cerrar el navegador?")) {
+                    // Cierra la ventana del navegador
+                    window.close();
+                }
+            }
         </script>
     </div>
 </body>
