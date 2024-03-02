@@ -5,6 +5,7 @@ from ultralytics import YOLO
 import supervision as sv
 import os
 import sqlite3 as sql 
+import pyrebase
 from flask import Flask,render_template,Response,request,redirect,url_for,session 
 import datetime as dt
 
@@ -12,6 +13,20 @@ key=os.urandom(12)
 app = Flask(__name__,template_folder='plantilla') #se inicializa la aplicacion
 app.secret_key = 'key'
 
+config = {
+        "apiKey": "AIzaSyCC1C7eIcb6Q0-WeWKuzSrZNwVoSyVf8Lw",
+        "authDomain": "dbfrutas-dd3ba.firebaseapp.com",
+        "projectId": "dbfrutas-dd3ba",
+        "databaseURL": "https://dbfrutas-dd3ba-default-rtdb.firebaseio.com/",
+        "storageBucket": "dbfrutas-dd3ba.appspot.com",
+        "messagingSenderId": "404825544625",
+        "appId": "1:404825544625:web:efaa68356d01d1153ccf90",
+        "measurementId": "G-EMQTJ61ZL6"
+    }
+
+firebase = pyrebase.initialize_app(config)
+db = firebase.database()
+auth = firebase.auth()
 
 LINEA_INICIO = sv.Point(320, 0)
  #punto de inicio de la linea,la coordenada x es 320 y la coordenada y es 0
@@ -45,6 +60,9 @@ class linea_conteo_class():
 
 def main():
 
+    fecha_db = dt.datetime.now().strftime('%d-%m-%Y')
+    hora_db = dt.datetime.now().strftime('%H:%M')
+    
   
     linea = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL) #se crea el contador de la linea
     linea_1 = sv.LineZone(start=LINEA_INICIO, end=LINEA_FINAL)
@@ -68,6 +86,7 @@ def main():
     cam_sources=[0,1]
     for source in cam_sources:
         for result in model.track(source=source, show=False, stream=True, agnostic_nms=True,conf=0.5):
+            
             
             frame = result.orig_img
 
@@ -144,6 +163,12 @@ def main():
             if tomatearbol_out != 0:
                 print('Tomatearbol', tomatearbol_out)
 
+            db.child(fecha_db).child(hora_db).update(
+                {"Aguacate": aguacate_out,
+                "Maracuya": maracuya_out,
+                "Pitahaya": pitahaya_out,
+                "Tomatearbol": tomatearbol_out})
+
             base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
             
             (flag, encodedImage) = cv2.imencode(".jpg", frame)
@@ -173,7 +198,7 @@ def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
                         )''')
         
         fecha_creacion = dt.datetime.today().strftime('%Y-%m-%d')
-
+        
         cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (fecha_creacion,))
         existing_record = cursor.fetchone()
 
