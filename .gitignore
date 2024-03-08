@@ -2,3 +2,6 @@ entrvtr/Lib/site-packages/__pycache__/isympy.cpython-310.pyc
 __pycache__/modelo.cpython-310.pyc
 __pycache__/pandas.cpython-310.pyc
 __pycache__/streamlit.cpython-310.pyc
+.vscode/
+__pycache__
+
