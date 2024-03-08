@@ -170,12 +170,16 @@ def main():
                 "Tomatearbol": tomatearbol_out})
 
             base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out)
-            
-            (flag, encodedImage) = cv2.imencode(".jpg", frame)
-            if not flag:
-                    continue
-            yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
+            try:
+                (flag, encodedImage) = cv2.imencode(".jpg", frame)
+                if not flag:
+                    raise ValueError("La codificación de la imagen falló")  # Lanza un error específico
+
+                yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                     bytearray(encodedImage) + b'\r\n')
+            except Exception as e:
+                print("Error al procesar la imagen:", e)
+                
             
   
 def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
