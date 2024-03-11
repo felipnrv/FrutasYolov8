@@ -193,28 +193,31 @@ def base_datos_conteo(maracuya_out, pitahaya_out,aguacate_out,tomatearbol_out):
         # Crea la tabla si no existe
         cursor.execute('''CREATE TABLE IF NOT EXISTS conteo_frutas (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            maracuya_out INTEGER,
-                            pitahaya_out INTEGER,
-                            aguacate_out INTEGER,
-                            tomatearbol_out INTEGER,
-                            fecha_creacion DATE NOT NULL
+                            maracuya INTEGER DEFAULT 0,
+                            pitahaya INTEGER DEFAULT 0,
+                            aguacate INTEGER DEFAULT 0,
+                            tomate_arbol INTEGER DEFAULT 0,
+                            fecha_creacion DATE NOT NULL DEFAULT 0
                             
                         )''')
         
         fecha_creacion = dt.datetime.today().strftime('%Y-%m-%d')
+        
         
         cursor.execute('SELECT * FROM conteo_frutas WHERE fecha_creacion=?', (fecha_creacion,))
         existing_record = cursor.fetchone()
 
         if existing_record:
             # Si hay un registro con la misma fecha, actualiza los valores
-            cursor.execute('''UPDATE conteo_frutas SET maracuya_out=?, pitahaya_out=?, aguacate_out=?, tomatearbol_out=? WHERE fecha_creacion=?''',
+            cursor.execute('''UPDATE conteo_frutas SET maracuya=?, pitahaya=?, aguacate=?, tomate_arbol=? WHERE fecha_creacion=?''',
                         (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion))
+            
             
         else:
             # Si no hay un registro con la misma fecha, inserta uno nuevo
-            cursor.execute('''INSERT INTO conteo_frutas (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion) VALUES (?, ?, ?, ?, ?)''',
+            cursor.execute('''INSERT INTO conteo_frutas (maracuya, pitahaya, aguacate, tomate_arbol, fecha_creacion) VALUES (?, ?, ?, ?, ?)''',
                         (maracuya_out, pitahaya_out, aguacate_out, tomatearbol_out, fecha_creacion))
+        
             
         connection.commit()
 
