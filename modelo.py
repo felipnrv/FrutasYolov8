@@ -149,9 +149,9 @@ def main():
             cv2.putText(frame, tomatearbol_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
             y_offset += 30
 
-            flecha = "<--------"
-            cv2.putText(frame, flecha, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
-            y_offset += 30
+            #flecha = "<--------"
+            #cv2.putText(frame, flecha, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
+            #y_offset += 30
 
             
             if aguacate_out != 0:
