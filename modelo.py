@@ -81,7 +81,7 @@ def main():
     pitahaya = linea_conteo_class(fruta3_pitah, linea_3)
     tomatearbol = linea_conteo_class(fruta4_tomate, linea_4)
 
-    model = YOLO("./modelofrutas.pt")
+    model = YOLO("./modelo_frutas.pt")
 
     cam_sources=[0,1]
     for source in cam_sources:
