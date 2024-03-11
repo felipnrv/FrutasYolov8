@@ -85,7 +85,7 @@ def main():
 
     cam_sources=[0,1]
     for source in cam_sources:
-        for result in model.track(source=source, show=False, stream=True, agnostic_nms=True,conf=0.5):
+        for result in model.track(source=source, show=False, stream=True, agnostic_nms=True,conf=0.3):
             
             
             frame = result.orig_img
@@ -149,7 +149,7 @@ def main():
             cv2.putText(frame, tomatearbol_text, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
             y_offset += 30
 
-            flecha = "-------->"
+            flecha = "<--------"
             cv2.putText(frame, flecha, (50, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)#blanco en rgb es (255,255,255)
             y_offset += 30
 
